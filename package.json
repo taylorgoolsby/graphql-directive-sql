@@ -1,0 +1,12 @@
+{
+  "name": "graphql-to-sql",
+  "version": "0.0.1",
+  "description": "Treat your SQL schema as a subset of your GraphQL Schema. Use GraphQL SDL as the lingua franca to define your data requirements.",
+  "main": "index.js",
+  "repository": "git@github.com:taylorgoolsby/graphql-to-sql.git",
+  "author": "Taylor Goolsby <taylorgoolsby@users.noreply.github.com>",
+  "license": "SEE LICENSE FILE",
+  "engines": {
+    "node": ">=8.11.4"
+  }
+}
