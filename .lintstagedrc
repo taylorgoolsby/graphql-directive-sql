@@ -1,0 +1,10 @@
+{
+  "linters": {
+    "*.{ts}": [
+      "./node_modules/.bin/tslint --fix",
+      "./node_modules/.bin/prettier --write",
+      "git add"
+    ]
+  },
+  "ignore": []
+}
