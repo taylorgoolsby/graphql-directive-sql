@@ -1,6 +1,11 @@
-import { makeSqlSchemaScript, getSchemaDirectives } from '../lib'
+import { makeSqlSchema, getSchemaDirectives } from '../src'
 
 test('main test', () => {
-  makeSqlSchemaScript()
-  getSchemaDirectives()
+  makeSqlSchema({
+    typeDefs: '',
+    schemaDirectives: {
+      ...getSchemaDirectives(),
+    },
+    outputFilepath: '',
+  })
 })

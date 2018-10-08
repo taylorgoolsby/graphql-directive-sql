@@ -1,7 +1,2 @@
-const makeSqlSchemaScript = () => {}
-const getSchemaDirectives = () => {}
-
-export {
-  makeSqlSchemaScript,
-  getSchemaDirectives
-}
+export * from './makeSqlSchema'
+export * from './getSchemaDirectives'

@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "description": "Treat your SQL schema as a subset of your GraphQL Schema. Use GraphQL SDL as the lingua franca to define your data requirements.",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
     "lint": "./node_modules/.bin/tslint --fix 'src/**/*.{ts,tsx}'",
     "precommit": "lint-staged",
-    "test": "npm run build && jest",
+    "test": "jest",
     "prepublishOnly": "npm run test"
   },
   "repository": "git@github.com:taylorgoolsby/graphql-to-sql.git",
@@ -33,5 +34,18 @@
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "typescript": "^3.1.1"
-  }
+  },
+  "keywords": [
+    "graphql",
+    "mysql",
+    "sql",
+    "database",
+    "code-generation",
+    "generator",
+    "sdl",
+    "graphql-schema-language",
+    "graphql-schema",
+    "schema",
+    "sql-schema"
+  ]
 }
