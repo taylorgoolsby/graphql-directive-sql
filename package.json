@@ -2,7 +2,7 @@
   "name": "graphql-to-sql",
   "version": "0.0.1",
   "description": "Treat your SQL schema as a subset of your GraphQL Schema. Use GraphQL SDL as the lingua franca to define your data requirements.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts,tsx,js,jsx}'",

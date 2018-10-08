@@ -1,3 +1,6 @@
+import { makeSqlSchemaScript, getSchemaDirectives } from '../lib'
+
 test('main test', () => {
-  expect(true).toBeTruthy()
+  makeSqlSchemaScript()
+  getSchemaDirectives()
 })
