@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts}'",
-    "lint": "./node_modules/.bin/tslint --fix 'src/**/*.{ts}'",
-    "precommit": "lint-staged"
+    "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
+    "lint": "./node_modules/.bin/tslint --fix 'src/**/*.{ts,tsx}'",
+    "precommit": "lint-staged",
+    "test": "npm run build && jest",
+    "prepublishOnly": "npm run test"
   },
   "repository": "git@github.com:taylorgoolsby/graphql-to-sql.git",
   "author": "Taylor Goolsby <taylorgoolsby@users.noreply.github.com>",
@@ -20,11 +22,14 @@
     "graphql-tools": "^4.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.3",
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.0",
     "husky": "^1.1.1",
+    "jest": "^23.6.0",
     "lint-staged": "^7.3.0",
     "prettier": "^1.14.3",
+    "ts-jest": "^23.10.4",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "typescript": "^3.1.1"
