@@ -39,6 +39,7 @@ makeSqlSchemaScript({
   outputFilepath: 'createTablesScript.sql'
 })
 ```
+Also see [main-test.ts](__tests__/main-test.ts) for a working example.
 
 ## Arguments for `@sql()`:
 ON OBJECT:
