@@ -1,6 +1,7 @@
 __tests__/
 src/
 .lintstagedrc
+.nvmrc
 .prettierrc
 jest.config.js
 tsconfig.json
