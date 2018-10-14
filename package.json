@@ -23,6 +23,7 @@
     "graphql-tools": "^4.0.0"
   },
   "devDependencies": {
+    "@types/graphql": "^14.0.2",
     "@types/jest": "^23.3.3",
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.0",
