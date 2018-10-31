@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra'
 import {
   IExecutableSchemaDefinition,
   SchemaDirectiveVisitor,
@@ -20,6 +21,8 @@ export interface IMakeSqlSchemaInput extends IExecutableSchemaDefinition {
     [name: string]: typeof SchemaDirectiveVisitor
   }
   outputFilepath: string
+  databaseName: string
+  tablePrefix?: string
 }
 
 export interface ITable {
@@ -66,29 +69,19 @@ export function addColumn(tableName: string, column: IColumn): void {
 export function makeSqlSchema(options: IMakeSqlSchemaInput): void {
   sqlAST = {}
   const outputFilepath = options.outputFilepath
+  const databaseName = options.databaseName
+  const tablePrefix = options.tablePrefix || ''
   delete options.outputFilepath
+  delete options.databaseName
   makeExecutableSchema(options)
   setDefaults()
   gatherIndices()
-  renderCreateSchemaScript()
+  renderCreateSchemaScript(databaseName, tablePrefix, outputFilepath)
 }
 
 function setDefaults() {
   forEachTableDo(table => {
     forEachColumnDo(table, column => {
-      /*
-      export interface IColumn {
-        name: string
-        auto?: boolean
-        default?: string
-        index?: boolean
-        nullable?: boolean
-        primary?: boolean
-        type?: string
-        unicode?: boolean
-        unique?: boolean
-      }
-      */
       if (column.primary && column.nullable) {
         emitError(
           table.name,
@@ -184,8 +177,72 @@ function gatherIndices() {
   })
 }
 
-function renderCreateSchemaScript() {
-  console.log('Creating script from:', JSON.stringify(sqlAST, null, '  '))
+function renderCreateSchemaScript(
+  databaseName: string,
+  tablePrefix: string,
+  outputFilepath: string
+): void {
+  // console.log('Creating script from:', JSON.stringify(sqlAST, null, '  '))
+
+  const tableDefinitions: string[] = []
+  forEachTableDo(table => {
+    const columnDefinitions: string[] = []
+    forEachColumnDo(table, column => {
+      /*
+      export interface IColumn {
+        name: string
+        auto?: boolean
+        default?: string
+        index?: boolean
+        nullable?: boolean
+        primary?: boolean
+        type?: string
+        unicode?: boolean
+        unique?: boolean
+      }
+      */
+      const nullClause = !!column.nullable ? 'NULL ' : 'NOT NULL '
+      const unicodeClause = !!column.unicode
+        ? 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci '
+        : ''
+      const defaultClause = !!column.default ? `DEFAULT ${column.default} ` : ''
+      const autoClause = !!column.auto ? 'AUTO_INCREMENT ' : ''
+      const uniqueClause = !!column.unique ? `UNIQUE ` : ''
+      columnDefinitions.push(
+        `\`${column.name}\` ${
+          column.type
+        } ${unicodeClause}${nullClause}${defaultClause}${autoClause}${uniqueClause}`.trim()
+      )
+    })
+
+    const primaryKeyName = (table.primaryIndex && table.primaryIndex.name) || ''
+
+    let indexDefinitions = (table.secondaryIndices || []).map(column => {
+      return `INDEX \`${column.name.toUpperCase()}INDEX\` (\`${
+        column.name
+      }\` ASC)`
+    })
+    if (indexDefinitions.length > 0) {
+      indexDefinitions = [''].concat(indexDefinitions)
+    }
+
+    const unicodeModifier = table.unicode
+      ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+      : ''
+
+    tableDefinitions.push(
+      `CREATE TABLE \`${databaseName}\`.${tablePrefix}${table.name} (
+  ${columnDefinitions.join(',\n  ')},
+  PRIMARY KEY (\`${primaryKeyName}\`)${indexDefinitions.join(',\n  ')}
+)${unicodeModifier};`
+    )
+  })
+
+  if (outputFilepath) {
+    fs.outputFileSync(`${outputFilepath}`, tableDefinitions.join('\n\n'))
+  } else {
+    console.log(tableDefinitions.join('\n\n'))
+  }
 }
 
 function forEachTableDo(foo: (table: ITable) => void): void {

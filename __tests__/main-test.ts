@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import {
   makeSqlSchema,
   getSchemaDirectives,
@@ -25,12 +26,34 @@ test('main test', () => {
     }
   `
 
+  const outputFilepath = '__tests__/testOutput.sql'
   const directives = getSchemaDirectives()
   makeSqlSchema({
     typeDefs,
     schemaDirectives: directives,
-    outputFilepath: '',
+    outputFilepath,
+    databaseName: 'dbname',
+    tablePrefix: 'test_',
   })
+
+  const testOutput = fs.readFileSync(outputFilepath, { encoding: 'utf8' })
+  expect(testOutput).toEqual(
+    `CREATE TABLE \`dbname\`.test_User (
+  \`userId\` BINARY(16) NOT NULL,
+  \`uniqueColumn\` INT NOT NULL UNIQUE,
+  PRIMARY KEY (\`userId\`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE \`dbname\`.test_Post (
+  \`postId\` INT NOT NULL AUTO_INCREMENT,
+  \`userId\` BINARY(16) NOT NULL,
+  \`content\` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  \`likes\` INT NOT NULL,
+  \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`postId\`),
+  INDEX \`USERIDINDEX\` (\`userId\` ASC)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+  )
 })
 
 test('error no primary index', () => {
@@ -48,6 +71,7 @@ test('error no primary index', () => {
       typeDefs,
       schemaDirectives: directives,
       outputFilepath: '',
+      databaseName: 'dbname',
     })
   }).toThrow()
 })
@@ -68,6 +92,7 @@ test('error multiple primary index', () => {
       typeDefs,
       schemaDirectives: directives,
       outputFilepath: '',
+      databaseName: 'dbname',
     })
   }).toThrow()
 })

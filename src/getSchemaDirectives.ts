@@ -3,19 +3,10 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLField,
-  GraphQLArgument,
-  GraphQLInterfaceType,
-  GraphQLInputObjectType,
-  GraphQLInputField,
-  GraphQLScalarType,
-  GraphQLUnionType,
-  GraphQLEnumType,
-  GraphQLEnumValue,
   GraphQLDirective,
   DirectiveLocation,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLInt,
 } from 'graphql'
 import { addTable, addColumn, ITable, IColumn } from './makeSqlSchema'
 
