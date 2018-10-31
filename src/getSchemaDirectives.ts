@@ -17,6 +17,7 @@ import {
   GraphQLBoolean,
   GraphQLInt,
 } from 'graphql'
+import { addTable, addColumn, ITable, IColumn } from './makeSqlSchema'
 
 export interface IGetSchemaDirectivesInput {
   directiveName?: string
@@ -25,27 +26,6 @@ export interface IGetSchemaDirectivesInput {
 export interface IGetSchemaDirectivesOutput {
   [directiveName: string]: typeof SchemaDirectiveVisitor
 }
-
-interface ITable {
-  name: string
-  columns: { [name: string]: IColumn }
-  unicode?: boolean
-}
-
-interface IColumn {
-  name: string
-  auto?: boolean
-  default?: string
-  index?: boolean
-  length?: number
-  nullable?: boolean
-  primary?: boolean
-  type?: string
-  unicode?: boolean
-  unique?: boolean
-}
-
-const extractedData: { [name: string]: ITable } = {}
 
 export function getSchemaDirectives({
   directiveName = 'sql',
@@ -97,29 +77,25 @@ export function getSchemaDirectives({
     }
     public visitObject(object: GraphQLObjectType) {
       const tableName = object.name
-      extractedData[tableName] = {
+
+      const sqlTable: ITable = {
         name: tableName,
         columns: {},
         ...this.args,
       }
+      addTable(sqlTable)
       // console.log('visitObject', tableName, this.args)
     }
     public visitFieldDefinition(field: GraphQLField<any, any>, details: any) {
       if (!this.args.hide) {
         const tableName = details.objectType.name
         const columnName = field.name
-        extractedData[tableName] = {
-          ...extractedData[tableName],
-          name: tableName,
-          columns: {
-            ...extractedData[tableName].columns,
-            [columnName]: {
-              name: columnName,
-              ...this.args,
-            },
-          },
+
+        const sqlColumn: IColumn = {
+          name: columnName,
+          ...this.args,
         }
-        console.log('extractedData', JSON.stringify(extractedData, null, '  '))
+        addColumn(tableName, sqlColumn)
       }
       // console.log('visitFieldDefinition', tableName, columnName, this.args)
     }
