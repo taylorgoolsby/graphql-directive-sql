@@ -14,6 +14,8 @@ export interface IMakeSqlSchemaInput extends IExecutableSchemaDefinition {
 export interface ITable {
   name: string
   columns: { [name: string]: IColumn }
+  primaryIndex?: IColumn
+  secondaryIndices?: IColumn[]
   unicode?: boolean
 }
 
@@ -55,5 +57,39 @@ export function makeSqlSchema(options: IMakeSqlSchemaInput): void {
   const outputFilepath = options.outputFilepath
   delete options.outputFilepath
   makeExecutableSchema(options)
-  console.log('SQL AST', JSON.stringify(sqlAST, null, '  '))
+  gatherIndices()
+  renderCreateSchemaScript()
+}
+
+function gatherIndices() {
+  for (const tableName in sqlAST) {
+    if (!sqlAST.hasOwnProperty(tableName)) continue
+    const table: ITable = sqlAST[tableName]
+
+    for (const columnName in table.columns) {
+      if (!table.columns.hasOwnProperty(columnName)) continue
+      const column: IColumn = table.columns[columnName]
+
+      if (column.primary) {
+        if (!!table.primaryIndex) {
+          throw new Error(
+            'More than one column is marked as the primary index.'
+          )
+        } else {
+          table.primaryIndex = column
+        }
+      } else if (column.index) {
+        table.secondaryIndices = table.secondaryIndices || []
+        table.secondaryIndices.push(column)
+      }
+    }
+
+    if (!table.primaryIndex) {
+      throw new Error(`Table ${tableName} does not have a primary index.`)
+    }
+  }
+}
+
+function renderCreateSchemaScript() {
+  console.log('Creating script from:', JSON.stringify(sqlAST, null, '  '))
 }
