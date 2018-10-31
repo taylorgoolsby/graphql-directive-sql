@@ -26,6 +26,27 @@ export interface IGetSchemaDirectivesOutput {
   [directiveName: string]: typeof SchemaDirectiveVisitor
 }
 
+interface ITable {
+  name: string
+  columns: { [name: string]: IColumn }
+  unicode?: boolean
+}
+
+interface IColumn {
+  name: string
+  auto?: boolean
+  default?: string
+  index?: boolean
+  length?: number
+  nullable?: boolean
+  primary?: boolean
+  type?: string
+  unicode?: boolean
+  unique?: boolean
+}
+
+const extractedData: { [name: string]: ITable } = {}
+
 export function getSchemaDirectives({
   directiveName = 'sql',
 }: IGetSchemaDirectivesInput = {}): IGetSchemaDirectivesOutput {
@@ -41,9 +62,6 @@ export function getSchemaDirectives({
           DirectiveLocation.FIELD_DEFINITION,
         ],
         args: {
-          options: {
-            type: GraphQLString,
-          },
           unicode: {
             type: GraphQLBoolean,
           },
@@ -78,10 +96,32 @@ export function getSchemaDirectives({
       })
     }
     public visitObject(object: GraphQLObjectType) {
-      console.log('visitObject', object, this.args)
+      const tableName = object.name
+      extractedData[tableName] = {
+        name: tableName,
+        columns: {},
+        ...this.args,
+      }
+      // console.log('visitObject', tableName, this.args)
     }
-    public visitFieldDefinition(field: GraphQLField<any, any>) {
-      console.log('visitFieldDefinition', field.name, this.args)
+    public visitFieldDefinition(field: GraphQLField<any, any>, details: any) {
+      if (!this.args.hide) {
+        const tableName = details.objectType.name
+        const columnName = field.name
+        extractedData[tableName] = {
+          ...extractedData[tableName],
+          name: tableName,
+          columns: {
+            ...extractedData[tableName].columns,
+            [columnName]: {
+              name: columnName,
+              ...this.args,
+            },
+          },
+        }
+        console.log('extractedData', JSON.stringify(extractedData, null, '  '))
+      }
+      // console.log('visitFieldDefinition', tableName, columnName, this.args)
     }
   }
 
@@ -90,8 +130,9 @@ export function getSchemaDirectives({
   }
 }
 
+// todo handle hide by using Schema Transforms to filter types marked with hide
+
 export const directiveDeclaration = `directive @sql(
-  options: String
   unicode: Boolean
   auto: Boolean
   default: String

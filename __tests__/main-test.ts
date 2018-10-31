@@ -7,7 +7,7 @@ import {
 const typeDefs = `
   ${directiveDeclaration}
 
-  type User @sql(options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci") {
+  type User @sql(unicode: true) {
     userId: String @sql(type: "BINARY(16)", primary: true)
     databaseOnlyField: Int @sql(hide: true)
     graphqlOnlyField: String
