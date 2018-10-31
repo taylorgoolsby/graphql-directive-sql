@@ -9,7 +9,10 @@
     "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
     "lint": "./node_modules/.bin/tslint --fix 'src/**/*.{ts,tsx}'",
     "test": "jest",
-    "prepublishOnly": "npm run test"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": "git@github.com:taylorgoolsby/graphql-to-sql.git",
   "author": "Taylor Goolsby <taylorgoolsby@users.noreply.github.com>",
