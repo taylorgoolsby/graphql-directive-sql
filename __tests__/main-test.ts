@@ -19,9 +19,9 @@ test('main test', () => {
     type Post @sql(unicode: true) {
       postId: Int @sql(primary: true, auto: true)
       userId: String @sql(type: "BINARY(16)", index: true)
-      content: String @sql(length: 240, unicode: true, nullable: true)
+      content: String @sql(type: "VARCHAR(300)", unicode: true, nullable: true)
       likes: Int @sql
-      dateCreated: String @sql(default: "CURRENT_TIMESTAMP")
+      dateCreated: String @sql(type: "TIMESTAMP", default: "CURRENT_TIMESTAMP")
     }
   `
 

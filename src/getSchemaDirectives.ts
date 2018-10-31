@@ -57,9 +57,6 @@ export function getSchemaDirectives({
           index: {
             type: GraphQLBoolean,
           },
-          length: {
-            type: GraphQLInt,
-          },
           nullable: {
             type: GraphQLBoolean,
           },
@@ -93,6 +90,7 @@ export function getSchemaDirectives({
 
         const sqlColumn: IColumn = {
           name: columnName,
+          graphQLType: field.type.toString(),
           ...this.args,
         }
         addColumn(tableName, sqlColumn)
@@ -114,7 +112,6 @@ export const directiveDeclaration = `directive @sql(
   default: String
   hide: Boolean
   index: Boolean
-  length: Int
   nullable: Boolean
   primary: Boolean
   type: String
