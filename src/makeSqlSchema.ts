@@ -152,6 +152,9 @@ function setDefaults() {
             '@unicode can only be applied to a string type.'
           )
         }
+        if (!table.unicode) {
+          table.unicode = true
+        }
       }
     })
   })
