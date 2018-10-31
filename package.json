@@ -8,7 +8,6 @@
     "build": "tsc",
     "format": "./node_modules/.bin/prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
     "lint": "./node_modules/.bin/tslint --fix 'src/**/*.{ts,tsx}'",
-    "precommit": "lint-staged",
     "test": "jest",
     "prepublishOnly": "npm run test"
   },
@@ -53,5 +52,10 @@
   ],
   "dependencies": {
     "fs-extra": "^7.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
