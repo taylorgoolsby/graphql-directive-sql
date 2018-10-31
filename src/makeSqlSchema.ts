@@ -105,6 +105,14 @@ function setDefaults() {
           column.type = 'BOOLEAN'
         } else if (column.graphQLType === 'JSON') {
           column.type = 'JSON'
+        } else {
+          emitError(
+            table.name,
+            column.name,
+            `A default SQL type cannot be generated for GraphQL type ${
+              column.graphQLType
+            }`
+          )
         }
       }
 
@@ -238,11 +246,7 @@ function renderCreateSchemaScript(
     )
   })
 
-  if (outputFilepath) {
-    fs.outputFileSync(`${outputFilepath}`, tableDefinitions.join('\n\n'))
-  } else {
-    console.log(tableDefinitions.join('\n\n'))
-  }
+  fs.outputFileSync(`${outputFilepath}`, tableDefinitions.join('\n\n'))
 }
 
 function forEachTableDo(foo: (table: ITable) => void): void {

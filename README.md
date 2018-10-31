@@ -11,10 +11,16 @@ Given a GraphQL schema defined in SDL, this function will output a `.sql` file w
 `node generate-sql.js`
 ```
 // generate-sql.js
-import {makeSqlSchemaScript, getSchemaDirectives} from 'graphql-to-sql'
+import {
+  makeSqlSchema,
+  getSchemaDirectives,
+  directiveDeclaration
+} from 'graphql-to-sql'
 
 const typeDefs = `
-  type User @sql(options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci") {
+  ${directiveDeclaration}
+
+  type User @sql(unicode: true) {
     userId: String @sql(type: "BINARY(16)", primary: true)
     databaseOnlyField: Int @sql(hide: true)
     graphqlOnlyField: String
@@ -25,33 +31,53 @@ const typeDefs = `
   type Post @sql(unicode: true) {
     postId: Int @sql(primary: true, auto: true)
     userId: String @sql(type: "BINARY(16)", index: true)
-    content: String @sql(length: 240, unicode: true, nullable: true)
+    content: String @sql(type: "VARCHAR(300)", unicode: true, nullable: true)
     likes: Int @sql
-    dateCreated: Date @sql(default: CURRENT_TIMESTAMP)
+    dateCreated: String @sql(type: "TIMESTAMP", default: "CURRENT_TIMESTAMP")
   }
 `
 
-makeSqlSchemaScript({
+const outputFilepath = 'schemaScript.sql'
+const directives = getSchemaDirectives()
+makeSqlSchema({
   typeDefs,
-  schemaDirectives: {
-    ...getSchemaDirectives({directiveName: 'sql'})
-  },
-  outputFilepath: 'createTablesScript.sql'
+  schemaDirectives: directives,
+  outputFilepath,
+  databaseName: 'dbname',
+  tablePrefix: 'test_',
 })
 ```
+The script above will produce this file:
+```
+-- schemaScript.sql
+CREATE TABLE `dbname`.test_User (
+  `userId` BINARY(16) NOT NULL,
+  `uniqueColumn` INT NOT NULL UNIQUE,
+  PRIMARY KEY (`userId`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `dbname`.test_Post (
+  `postId` INT NOT NULL AUTO_INCREMENT,
+  `userId` BINARY(16) NOT NULL,
+  `content` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `likes` INT NOT NULL,
+  `dateCreated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`postId`),
+  INDEX `USERIDINDEX` (`userId` ASC)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
 Also see [main-test.ts](__tests__/main-test.ts) for a working example.
 
 ## Arguments for `@sql()`:
 ON OBJECT:
-* options
 * unicode
 
 ON FIELD_DEFINITION:
 * auto
 * default
-* hide
+* ~~hide~~ (todo)
 * index
-* length
 * nullable
 * primary
 * type
@@ -64,7 +90,6 @@ ON FIELD_DEFINITION:
 - [x] Index
 - [x] Not Null
 - [x] Primary Key
-- [x] Table Options (see [table_options](https://dev.mysql.com/doc/refman/8.0/en/create-table.html))
 - [x] Unicode
 - [x] Unique
 - [ ] Check
