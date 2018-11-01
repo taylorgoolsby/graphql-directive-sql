@@ -38,13 +38,13 @@ test('main test', () => {
 
   const testOutput = fs.readFileSync(outputFilepath, { encoding: 'utf8' })
   expect(testOutput).toEqual(
-    `CREATE TABLE \`dbname\`.test_User (
+    `CREATE TABLE \`dbname\`.\`test_User\` (
   \`userId\` BINARY(16) NOT NULL,
   \`uniqueColumn\` INT NOT NULL UNIQUE,
   PRIMARY KEY (\`userId\`)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE \`dbname\`.test_Post (
+CREATE TABLE \`dbname\`.\`test_Post\` (
   \`postId\` INT NOT NULL AUTO_INCREMENT,
   \`userId\` BINARY(16) NOT NULL,
   \`content\` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,

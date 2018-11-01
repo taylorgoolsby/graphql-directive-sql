@@ -199,19 +199,6 @@ function renderCreateSchemaScript(
   forEachTableDo(table => {
     const columnDefinitions: string[] = []
     forEachColumnDo(table, column => {
-      /*
-      export interface IColumn {
-        name: string
-        auto?: boolean
-        default?: string
-        index?: boolean
-        nullable?: boolean
-        primary?: boolean
-        type?: string
-        unicode?: boolean
-        unique?: boolean
-      }
-      */
       const nullClause = !!column.nullable ? 'NULL ' : 'NOT NULL '
       const unicodeClause = !!column.unicode
         ? 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci '
@@ -242,7 +229,7 @@ function renderCreateSchemaScript(
       : ''
 
     tableDefinitions.push(
-      `CREATE TABLE \`${databaseName}\`.${tablePrefix}${table.name} (
+      `CREATE TABLE \`${databaseName}\`.\`${tablePrefix}${table.name}\` (
   ${columnDefinitions.join(',\n  ')},
   PRIMARY KEY (\`${primaryKeyName}\`)${indexDefinitions.join(',\n  ')}
 )${unicodeModifier};`
