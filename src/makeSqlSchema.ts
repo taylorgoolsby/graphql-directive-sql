@@ -60,7 +60,7 @@ export function addColumn(tableName: string, column: IColumn): void {
     ...sqlAST[tableName],
     name: tableName,
     columns: {
-      ...sqlAST[tableName].columns,
+      ...(sqlAST[tableName] || {}).columns,
       [column.name]: column,
     },
   }

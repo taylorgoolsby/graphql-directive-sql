@@ -17,7 +17,7 @@ test('main test', () => {
       posts: [Post]
     }
   
-    type Post @sql {
+    type Post {
       postId: Int @sql(primary: true, auto: true)
       userId: String @sql(type: "BINARY(16)", index: true)
       content: String @sql(type: "VARCHAR(300)", unicode: true, nullable: true)
