@@ -1,5 +1,5 @@
 {
-  "name": "graphql-to-sql",
+  "name": "graphql-directive-sql",
   "version": "1.0.9",
   "description": "Treat your SQL schema as a subset of your GraphQL Schema. Use GraphQL SDL as the lingua franca to define your data requirements.",
   "main": "lib/index.js",
@@ -14,7 +14,7 @@
     "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },
-  "repository": "git@github.com:taylorgoolsby/graphql-to-sql.git",
+  "repository": "git@github.com:taylorgoolsby/graphql-directive-sql.git",
   "author": "Taylor Goolsby <taylorgoolsby@users.noreply.github.com>",
   "license": "GPL-3.0",
   "engines": {
@@ -42,6 +42,7 @@
   },
   "keywords": [
     "graphql",
+    "directive",
     "mysql",
     "sql",
     "database",
