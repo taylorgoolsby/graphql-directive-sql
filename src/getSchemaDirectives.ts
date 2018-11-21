@@ -97,14 +97,19 @@ export function getSchemaDirectives({
 
 // todo handle hide by using Schema Transforms to filter types marked with hide
 
-export const directiveDeclaration = `directive @sql(
-  unicode: Boolean
-  auto: Boolean
-  default: String
-  hide: Boolean
-  index: Boolean
-  nullable: Boolean
-  primary: Boolean
-  type: String
-  unique: Boolean
-) on OBJECT | FIELD_DEFINITION`
+export function customDirectiveDeclaration(
+  customDirectiveName: string
+): string {
+  return `directive @${customDirectiveName}(
+    unicode: Boolean
+    auto: Boolean
+    default: String
+    hide: Boolean
+    index: Boolean
+    nullable: Boolean
+    primary: Boolean
+    type: String
+    unique: Boolean
+  ) on OBJECT | FIELD_DEFINITION`
+}
+export const sqlDirectiveDeclaration = customDirectiveDeclaration('sql')

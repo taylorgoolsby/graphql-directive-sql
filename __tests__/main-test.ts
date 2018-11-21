@@ -2,12 +2,12 @@ import * as fs from 'fs'
 import {
   makeSqlSchema,
   getSchemaDirectives,
-  directiveDeclaration,
+  sqlDirectiveDeclaration,
 } from '../src'
 
 test('main test', () => {
   const typeDefs = `
-    ${directiveDeclaration}
+    ${sqlDirectiveDeclaration}
   
     type User @sql(unicode: true) {
       userId: String @sql(type: "BINARY(16)", primary: true)
@@ -58,7 +58,7 @@ CREATE TABLE \`dbname\`.\`test_Post\` (
 
 test('error no primary index', () => {
   const typeDefs = `
-    ${directiveDeclaration}
+    ${sqlDirectiveDeclaration}
   
     type User @sql(unicode: true) {
       userId: String @sql(type: "BINARY(16)")
@@ -78,7 +78,7 @@ test('error no primary index', () => {
 
 test('error multiple primary index', () => {
   const typeDefs = `
-    ${directiveDeclaration}
+    ${sqlDirectiveDeclaration}
   
     type User @sql(unicode: true) {
       userId: String @sql(primary: true)
