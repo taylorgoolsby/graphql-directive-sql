@@ -17,12 +17,21 @@ Some advantages to using GraphQL SDL to unify your data structures:
 // generate-sql.js
 import {
   makeSqlSchema,
-  getSchemaDirectives,
-  directiveDeclaration
+  getSchemaDirectives
 } from 'graphql-to-sql'
 
 const typeDefs = `
-  ${directiveDeclaration}
+  directive @sql(
+    unicode: Boolean
+    auto: Boolean
+    default: String
+    hide: Boolean
+    index: Boolean
+    nullable: Boolean
+    primary: Boolean
+    type: String
+    unique: Boolean
+  ) on OBJECT | FIELD_DEFINITION
 
   type User @sql(unicode: true) {
     userId: String @sql(type: "BINARY(16)", primary: true)
