@@ -4,12 +4,6 @@ Unify your SQL schema and your GraphQL Schema. Use GraphQL SDL as the lingua fra
 
 Given a GraphQL schema defined in SDL, this function will output a schema script which, when ran on your database, will create all the tables in your database.
 
-Some advantages to using GraphQL SDL to unify your data structures:
-* Commit the SDL to your repo to track schema changes in one place to aid in migrations.
-* Keep your GraphQL types synchronized with your database tables for less cognitive load.
-* Generate static typing so your frontend can stay synced with schema for quicker refactoring. (WIP)
-* Use with [jest-environment-mysql](https://github.com/taylorgoolsby/jest-environment-mysql) to keep your tests synced with schema for peace of mind. (Example is WIP)
-
 ## Example
 
 `node generate-sql.js`
