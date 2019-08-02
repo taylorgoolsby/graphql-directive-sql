@@ -42,7 +42,7 @@ test('main test', () => {
 
     type UserPair
       @sql(
-        constraints: "UNIQUE(parentUserId, childUserId),\n  FOREIGN KEY (parentUserId) REFERENCES User(userId)"
+        constraints: "UNIQUE(parentUserId, childUserId),\\n  FOREIGN KEY (parentUserId) REFERENCES User(userId)"
       ) {
       userPairId: String @sql(type: "BINARY(16)", primary: true)
       parentUserId: String @sql(type: "BINARY(16)", index: true)
