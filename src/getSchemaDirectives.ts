@@ -36,6 +36,9 @@ export function getSchemaDirectives({
           unicode: {
             type: GraphQLBoolean,
           },
+          constraints: {
+            type: GraphQLString,
+          },
           auto: {
             type: GraphQLBoolean,
           },

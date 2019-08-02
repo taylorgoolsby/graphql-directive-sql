@@ -1,6 +1,7 @@
 CREATE TABLE `dbname`.`test_User` (
   `userId` BINARY(16) NOT NULL,
   `uniqueColumn` INT NOT NULL UNIQUE,
+  `databaseOnlyField` INT NOT NULL,
   PRIMARY KEY (`userId`)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -13,3 +14,14 @@ CREATE TABLE `dbname`.`test_Post` (
   PRIMARY KEY (`postId`),
   INDEX `USERIDINDEX` (`userId` ASC)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE `dbname`.`test_UserPair` (
+  `userPairId` BINARY(16) NOT NULL,
+  `parentUserId` BINARY(16) NOT NULL,
+  `childUserId` BINARY(16) NOT NULL,
+  PRIMARY KEY (`userPairId`),
+  INDEX `PARENTUSERIDINDEX` (`parentUserId` ASC),
+  INDEX `CHILDUSERIDINDEX` (`childUserId` ASC),
+  UNIQUE(parentUserId, childUserId),
+  FOREIGN KEY (parentUserId) REFERENCES User(userId)
+);

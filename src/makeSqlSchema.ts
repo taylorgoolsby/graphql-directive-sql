@@ -31,6 +31,7 @@ export interface ITable {
   primaryIndex?: IColumn
   secondaryIndices?: IColumn[]
   unicode?: boolean
+  constraints?: string
 }
 
 export interface IColumn {
@@ -224,6 +225,10 @@ function renderCreateSchemaScript(
       indexDefinitions = [''].concat(indexDefinitions)
     }
 
+    const constraints = table.constraints ? ',\n  ' + table.constraints : ''
+    // let constraints = (table.constraints || '').split(/,\s*/).join(',\n  ')
+    // constraints = constraints ? ',\n  ' + constraints : ''
+
     const unicodeModifier = table.unicode
       ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
       : ''
@@ -231,7 +236,9 @@ function renderCreateSchemaScript(
     tableDefinitions.push(
       `CREATE TABLE \`${databaseName}\`.\`${tablePrefix}${table.name}\` (
   ${columnDefinitions.join(',\n  ')},
-  PRIMARY KEY (\`${primaryKeyName}\`)${indexDefinitions.join(',\n  ')}
+  PRIMARY KEY (\`${primaryKeyName}\`)${indexDefinitions.join(
+        ',\n  '
+      )}${constraints}
 )${unicodeModifier};`
     )
   })
