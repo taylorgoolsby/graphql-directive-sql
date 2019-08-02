@@ -15,7 +15,7 @@ import {
   getSchemaDirectives
 } from 'graphql-to-sql'
 
-const typeDefs = `
+const typeDefs = gql`
   directive @sql (
     unicode: Boolean
     constraints: String
@@ -48,7 +48,7 @@ const typeDefs = `
     dateCreated: String @sql(type: "TIMESTAMP", default: "CURRENT_TIMESTAMP")
   }
   
-  type UserPair @sql(constraints: "UNIQUE(parentUserId, childUserId),\n  FOREIGN KEY (parentUserId) REFERENCES User(userId)") {
+  type UserPair @sql(constraints: "UNIQUE(parentUserId, childUserId),\\n  FOREIGN KEY (parentUserId) REFERENCES User(userId)") {
     userPairId: String @sql(type: "BINARY(16)", primary: true)
     parentUserId: String @sql(type: "BINARY(16)", index: true)
     childUserId: String @sql(type: "BINARY(16)", index: true)
