@@ -9,11 +9,11 @@ Given a GraphQL schema defined in SDL, this function will output a schema script
 `node generate-sql.js`
 ```
 // generate-sql.js
-import gql from 'graphql-tag'
-import {
+const gql = require('graphql-tag')
+const {
   makeSqlSchema,
   getSchemaDirectives
-} from 'graphql-to-sql'
+} = require('graphql-to-sql')
 
 const typeDefs = gql`
   directive @sql (
