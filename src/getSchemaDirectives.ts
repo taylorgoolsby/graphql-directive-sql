@@ -63,6 +63,9 @@ export function getSchemaDirectives({
           unique: {
             type: GraphQLBoolean,
           },
+          generated: {
+            type: GraphQLString,
+          },
         },
       })
     }
@@ -113,6 +116,7 @@ export function customDirectiveDeclaration(
     primary: Boolean
     type: String
     unique: Boolean
+    generated: String
   ) on OBJECT | FIELD_DEFINITION`
 }
 export const sqlDirectiveDeclaration = customDirectiveDeclaration('sql')

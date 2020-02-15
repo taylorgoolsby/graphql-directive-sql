@@ -139,6 +139,9 @@ ON FIELD_DEFINITION:
   * If any column is marked with "unicode", then the table will have `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`.
 * unique
   * Marks a column with the UNIQUE keyword.
+* generated
+  * Marks a generated column.
+  * Example: `@sql(generated: "(data->>'$.test')")`. See [main-test.ts](__tests__/main-test.ts#L137) for more examples.
 
 ## SQL Features Supported<sup>1</sup>:
 - [x] Auto Increment
@@ -151,6 +154,6 @@ ON FIELD_DEFINITION:
 - [ ] Check
 - [X] Constraints
 - [X] Foreign Key (via @constraints)
-- [ ] Generated Columns
+- [x] Generated Columns
 
 <sup>1</sup>Only MySQL is supported at the moment.

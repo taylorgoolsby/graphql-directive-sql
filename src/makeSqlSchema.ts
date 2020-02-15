@@ -45,6 +45,7 @@ export interface IColumn {
   graphQLType: string
   unicode?: boolean
   unique?: boolean
+  generated?: string
 }
 
 export interface ISQLAST {
@@ -110,9 +111,7 @@ function setDefaults() {
           emitError(
             table.name,
             column.name,
-            `A default SQL type cannot be generated for GraphQL type ${
-              column.graphQLType
-            }`
+            `A default SQL type cannot be generated for GraphQL type ${column.graphQLType}`
           )
         }
       }
@@ -142,6 +141,13 @@ function setDefaults() {
             '"unicode" is not allowed with "auto".'
           )
         }
+        if (column.generated) {
+          emitError(
+            table.name,
+            column.name,
+            '"generated" is not allowed with "auto".'
+          )
+        }
       }
 
       if (column.unicode) {
@@ -156,6 +162,26 @@ function setDefaults() {
         if (!table.unicode) {
           table.unicode = true
         }
+      }
+
+      if (column.generated && column.default) {
+        emitError(
+          table.name,
+          column.name,
+          '"default" is not allowed with "generated".'
+        )
+      }
+
+      if (column.generated && column.generated.startsWith('ALWAYS AS')) {
+        column.generated = `GENERATED ${column.generated}`
+      }
+
+      if (
+        column.generated &&
+        !column.generated.startsWith('GENERATED') &&
+        !column.generated.startsWith('AS')
+      ) {
+        column.generated = `AS ${column.generated}`
       }
     })
   })
@@ -200,17 +226,17 @@ function renderCreateSchemaScript(
   forEachTableDo(table => {
     const columnDefinitions: string[] = []
     forEachColumnDo(table, column => {
-      const nullClause = !!column.nullable ? 'NULL ' : 'NOT NULL '
       const unicodeClause = !!column.unicode
         ? 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci '
         : ''
+      const generatedClause = !!column.generated ? `${column.generated} ` : ''
+      const nullClause = !!column.nullable ? 'NULL ' : 'NOT NULL '
       const defaultClause = !!column.default ? `DEFAULT ${column.default} ` : ''
-      const autoClause = !!column.auto ? 'AUTO_INCREMENT ' : ''
+      const autoClause =
+        !!column.auto && column.type !== 'SERIAL' ? 'AUTO_INCREMENT ' : ''
       const uniqueClause = !!column.unique ? `UNIQUE ` : ''
       columnDefinitions.push(
-        `\`${column.name}\` ${
-          column.type
-        } ${unicodeClause}${nullClause}${defaultClause}${autoClause}${uniqueClause}`.trim()
+        `\`${column.name}\` ${column.type} ${unicodeClause}${generatedClause}${nullClause}${defaultClause}${autoClause}${uniqueClause}`.trim()
       )
     })
 

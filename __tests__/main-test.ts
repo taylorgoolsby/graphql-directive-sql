@@ -18,6 +18,7 @@ test('main test', () => {
       primary: Boolean
       type: String
       unique: Boolean
+      generated: String
     ) on OBJECT | FIELD_DEFINITION
 
     # See graphql-directive-private
@@ -117,8 +118,8 @@ test('error multiple primary index', () => {
     ${sqlDirectiveDeclaration}
   
     type User @sql(unicode: true) {
-      userId: String @sql(primary: true)
-      postId: String @sql(primary: true)
+      userId: String @sql(type: "BINARY(16)", primary: true)
+      postId: String @sql(type: "BINARY(16)", primary: true)
     }
   `
 
@@ -131,4 +132,50 @@ test('error multiple primary index', () => {
       databaseName: 'dbname',
     })
   }).toThrow()
+})
+
+test('generated', () => {
+  const typeDefs = gql`
+    ${sqlDirectiveDeclaration}
+
+    scalar JSON
+
+    type GeneratedTest {
+      userId: String @sql(type: "BINARY(16)", primary: true)
+      data: JSON @sql
+      test1: String
+        @sql(
+          type: "VARCHAR(30)"
+          generated: "GENERATED ALWAYS AS (data->>'$.test') VIRTUAL"
+        )
+      test2: String
+        @sql(type: "VARCHAR(30)", generated: "ALWAYS AS (data->>'$.test')")
+      test3: String @sql(type: "VARCHAR(30)", generated: "AS (data->>'$.test')")
+      test4: String
+        @sql(type: "VARCHAR(30)", generated: "(data->>'$.test')", index: true)
+    }
+  `
+
+  const outputFilepath = '__tests__/testOutput.sql'
+  const directives = getSchemaDirectives()
+  makeSqlSchema({
+    typeDefs,
+    schemaDirectives: directives,
+    outputFilepath,
+    databaseName: 'dbname',
+    tablePrefix: 'test_',
+  })
+
+  const testOutput = fs.readFileSync(outputFilepath, { encoding: 'utf8' })
+  console.log('testOutput', testOutput)
+  expect(testOutput).toEqual(`CREATE TABLE \`dbname\`.\`test_GeneratedTest\` (
+  \`userId\` BINARY(16) NOT NULL,
+  \`data\` JSON NOT NULL,
+  \`test1\` VARCHAR(30) GENERATED ALWAYS AS (data->>'$.test') VIRTUAL NOT NULL,
+  \`test2\` VARCHAR(30) GENERATED ALWAYS AS (data->>'$.test') NOT NULL,
+  \`test3\` VARCHAR(30) AS (data->>'$.test') NOT NULL,
+  \`test4\` VARCHAR(30) AS (data->>'$.test') NOT NULL,
+  PRIMARY KEY (\`userId\`),
+  INDEX \`TEST4INDEX\` (\`test4\` ASC)
+);`)
 })
