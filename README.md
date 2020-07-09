@@ -7,7 +7,7 @@ Given a GraphQL schema defined in SDL, this function will output a schema script
 ## Example
 
 `node generate-sql.js`
-```
+```js
 // generate-sql.js
 const gql = require('graphql-tag')
 const {
@@ -66,7 +66,7 @@ makeSqlSchema({
 })
 ```
 The script above will produce this file:
-```
+```sql
 -- schemaScript.sql
 CREATE TABLE `dbname`.`test_User` (
   `userId` BINARY(16) NOT NULL,
@@ -101,7 +101,7 @@ Also see [main-test.ts](__tests__/main-test.ts) for a working example.
 
 ## MySQL Syntax
 For reference:
-```
+```sql
 CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
     (create_definition,...)
     [table_options]
